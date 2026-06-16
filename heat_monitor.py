@@ -1,3 +1,16 @@
+import datetime
+import json
+
+today = str(datetime.date.today())
+
+# SAHTE VERİ (sonra gerçek yapacağız)
+data = {
+    today: {
+        "arpa": 37,
+        "ministero": 3
+    }
+}
+
 html = f"""
 <!DOCTYPE html>
 <html>
@@ -34,8 +47,6 @@ body {{
     background: rgba(255,255,255,0.05);
     padding: 20px;
     border-radius: 16px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }}
 
 .big {{
@@ -49,16 +60,7 @@ body {{
     border-radius: 10px;
     display: inline-block;
     margin-top: 10px;
-}}
-
-.red {{ background: #ef4444; }}
-.orange {{ background: #f97316; }}
-.green {{ background: #22c55e; }}
-
-select {{
-    padding: 10px;
-    border-radius: 10px;
-    margin-top: 10px;
+    background: #f97316;
 }}
 </style>
 </head>
@@ -68,45 +70,30 @@ select {{
 <div class="header">
 🌡 MILANO HEAT MONITORING DASHBOARD
 <br>
-<select id="day" onchange="update()">
-    <option>2026-06-14</option>
-    <option>2026-06-15</option>
-    <option selected>2026-06-16</option>
-</select>
+{today}
 </div>
 
 <div class="grid">
 
 <div class="card">
 <h2>ARPA Lombardia</h2>
-<div class="big" id="arpa"></div>
-<div class="badge orange">Humidex</div>
+<div class="big">{data[today]["arpa"]}°C</div>
+<div class="badge">Humidex</div>
 </div>
 
 <div class="card">
 <h2>Ministero della Salute</h2>
-<div class="big" id="ministero"></div>
-<div class="badge red">HHWWS</div>
+<div class="big">Level {data[today]["ministero"]}</div>
+<div class="badge">HHWWS</div>
 </div>
 
 </div>
-
-<script>
-const data = {json.dumps(data)};
-
-function update() {{
-    const day = document.getElementById("day").value;
-
-    document.getElementById("arpa").innerText =
-        data[day].arpa + "°C";
-
-    document.getElementById("ministero").innerText =
-        "Level " + data[day].ministero;
-}}
-
-update();
-</script>
 
 </body>
 </html>
 """
+
+with open("index.html", "w", encoding="utf-8") as f:
+    f.write(html)
+
+print("OK")
