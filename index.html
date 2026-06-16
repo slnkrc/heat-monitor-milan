@@ -5,6 +5,8 @@
 <meta charset="utf-8">
 <title>Milano Heat Dashboard</title>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <style>
 body {
     margin: 0;
@@ -17,8 +19,6 @@ body {
     text-align: center;
     padding: 25px;
     background: #111827;
-    font-size: 22px;
-    font-weight: bold;
 }
 
 .grid {
@@ -26,7 +26,7 @@ body {
     grid-template-columns: 1fr 1fr;
     gap: 20px;
     padding: 20px;
-    max-width: 900px;
+    max-width: 1000px;
     margin: auto;
 }
 
@@ -39,15 +39,10 @@ body {
 .big {
     font-size: 48px;
     font-weight: bold;
-    margin-top: 10px;
 }
 
-.badge {
-    padding: 8px 12px;
-    border-radius: 10px;
-    display: inline-block;
-    margin-top: 10px;
-    background: #f97316;
+.chart {
+    grid-column: 1 / span 2;
 }
 </style>
 </head>
@@ -55,26 +50,52 @@ body {
 <body>
 
 <div class="header">
-🌡 MILANO HEAT MONITORING DASHBOARD
-<br>
+🌡 MILANO HEAT DASHBOARD<br>
 2026-06-16
 </div>
 
 <div class="grid">
 
 <div class="card">
-<h2>ARPA Lombardia</h2>
-<div class="big">37°C</div>
-<div class="badge">Humidex</div>
+<h2>ARPA Lombardia (Live)</h2>
+<div class="big">37.0°C</div>
 </div>
 
 <div class="card">
-<h2>Ministero della Salute</h2>
+<h2>Ministero Risk Level</h2>
 <div class="big">Level 3</div>
-<div class="badge">HHWWS</div>
+</div>
+
+<div class="card chart">
+<canvas id="chart"></canvas>
 </div>
 
 </div>
+
+<script>
+const labels = ["10 Jun", "11 Jun", "12 Jun", "13 Jun", "14 Jun", "15 Jun", "16 Jun"];
+
+new Chart(document.getElementById("chart"), {
+    type: "line",
+    data: {
+        labels: labels,
+        datasets: [
+            {
+                label: "Temperature",
+                data: [36, 35, 34, 33, 32, 31, 30],
+                borderColor: "red",
+                tension: 0.3
+            },
+            {
+                label: "Risk Level",
+                data: [3, 3, 3, 2, 2, 1, 1],
+                borderColor: "orange",
+                tension: 0.3
+            }
+        ]
+    }
+});
+</script>
 
 </body>
 </html>
