@@ -1,130 +1,61 @@
-
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
-<title>Milano Heat Dashboard</title>
+<title>Milano Live Heat Dashboard</title>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 body {
     margin:0;
-    font-family:Arial,sans-serif;
+    font-family:Arial;
     background:#0f172a;
     color:white;
-}
-
-.header {
     text-align:center;
-    padding:25px;
-    background:#111827;
-    font-size:22px;
-    font-weight:bold;
-}
-
-.grid {
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:20px;
-    max-width:1100px;
-    margin:auto;
-    padding:20px;
 }
 
 .card {
     background:#1e293b;
+    margin:20px auto;
+    padding:20px;
+    width:300px;
     border-radius:16px;
-    padding:25px;
-    box-shadow:0 4px 12px rgba(0,0,0,.25);
 }
-
-.card h2 {
-    margin-top:0;
-    font-size:20px;
-}
-
 .big {
-    font-size:52px;
+    font-size:48px;
     font-weight:bold;
-    margin-top:10px;
-}
-
-.chart {
-    grid-column:1 / span 2;
-    min-height:450px;
-}
-
-.chart canvas {
-    height:350px !important;
 }
 </style>
 </head>
 
 <body>
 
-<div class="header">
-🌡 MILANO HEAT DASHBOARD<br>
-2026-06-16
-</div>
-
-<div class="grid">
+<h1>🌡 MILANO LIVE DASHBOARD</h1>
 
 <div class="card">
-<h2>ARPA Lombardia</h2>
-<div class="big">27.7°C</div>
+<h2>ARPA</h2>
+<div id="arpa" class="big">...</div>
 </div>
 
 <div class="card">
-<h2>Ministero Risk Level</h2>
-<div class="big">Level 1</div>
-</div>
-
-<div class="card chart">
-<h2>Comparison</h2>
-<canvas id="chart"></canvas>
-</div>
-
+<h2>Risk</h2>
+<div id="risk" class="big">...</div>
 </div>
 
 <script>
-const labels = ["10 Jun", "11 Jun", "12 Jun", "13 Jun", "14 Jun", "15 Jun", "16 Jun"];
 
-new Chart(document.getElementById("chart"), {
-    type: "line",
-    data: {
-        labels: labels,
-        datasets: [
-            {
-                label: "Humidex",
-                data: [31, 32, 33, 34, 35, 36, 28],
-                borderColor: "#ef4444",
-                borderWidth: 3,
-                pointRadius: 5,
-                tension: 0.4
-            },
-            {
-                label: "HHWWS",
-                data: [1, 1, 2, 2, 2, 3, 1],
-                borderColor: "#f59e0b",
-                borderWidth: 3,
-                pointRadius: 5,
-                tension: 0.4
-            }
-        ]
-    },
-    options: {
-        responsive:true,
-        maintainAspectRatio:false,
-        plugins:{
-            legend:{ labels:{ color:"white" } }
-        },
-        scales:{
-            x:{ ticks:{ color:"white" }, grid:{ color:"rgba(255,255,255,.1)" } },
-            y:{ ticks:{ color:"white" }, grid:{ color:"rgba(255,255,255,.1)" } }
-        }
-    }
-});
+// 🔴 LIVE FETCH
+async function loadData() {
+    const res = await fetch("data.json?v=" + new Date().getTime());
+    const data = await res.json();
+
+    document.getElementById("arpa").innerText = data.arpa + "°C";
+    document.getElementById("risk").innerText = "Level " + data.ministero;
+}
+
+loadData();
+setInterval(loadData, 60000); // 🔥 her 60 saniyede update
 </script>
 
 </body>
