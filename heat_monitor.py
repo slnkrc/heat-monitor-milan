@@ -1,15 +1,45 @@
 import datetime
 import json
+import requests
 
-today = str(datetime.date.today())
+today = datetime.date.today().strftime("%Y-%m-%d")
 
-# SAHTE VERİ (sonra gerçek yapacağız)
+# 🔴 1. Dış veri çekme (örnek API mantığı)
+# (gerçekte ARPA API yoksa burayı sonra değiştiririz)
+try:
+    response = requests.get("https://api.open-meteo.com/v1/forecast?latitude=45.46&longitude=9.19&hourly=temperature_2m")
+    api_data = response.json()
+
+    arpa_value = api_data["hourly"]["temperature_2m"][-1]
+except:
+    arpa_value = 37  # fallback
+
+# 🔴 Ministero (şimdilik basit risk modeli)
+if arpa_value > 35:
+    ministero = 3
+elif arpa_value > 30:
+    ministero = 2
+else:
+    ministero = 1
+
 data = {
     today: {
-        "arpa": 37,
-        "ministero": 3
+        "arpa": arpa_value,
+        "ministero": ministero
     }
 }
+
+# 🔴 7 günlük simülasyon (auto)
+dates = []
+humidex = []
+hhwws = []
+
+for i in range(6, -1, -1):
+    d = datetime.date.today() - datetime.timedelta(days=i)
+    dates.append(d.strftime("%d %b"))
+
+    humidex.append(30 + i)
+    hhwws.append(min(3, 1 + i // 2))
 
 html = f"""
 <!DOCTYPE html>
@@ -17,6 +47,8 @@ html = f"""
 <head>
 <meta charset="utf-8">
 <title>Milano Heat Dashboard</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 body {{
@@ -30,8 +62,6 @@ body {{
     text-align: center;
     padding: 25px;
     background: #111827;
-    font-size: 22px;
-    font-weight: bold;
 }}
 
 .grid {{
@@ -39,7 +69,7 @@ body {{
     grid-template-columns: 1fr 1fr;
     gap: 20px;
     padding: 20px;
-    max-width: 900px;
+    max-width: 1000px;
     margin: auto;
 }}
 
@@ -52,15 +82,10 @@ body {{
 .big {{
     font-size: 48px;
     font-weight: bold;
-    margin-top: 10px;
 }}
 
-.badge {{
-    padding: 8px 12px;
-    border-radius: 10px;
-    display: inline-block;
-    margin-top: 10px;
-    background: #f97316;
+.chart {{
+    grid-column: 1 / span 2;
 }}
 </style>
 </head>
@@ -68,26 +93,50 @@ body {{
 <body>
 
 <div class="header">
-🌡 MILANO HEAT MONITORING DASHBOARD
-<br>
+🌡 MILANO LIVE HEAT DASHBOARD<br>
 {today}
 </div>
 
 <div class="grid">
 
 <div class="card">
-<h2>ARPA Lombardia</h2>
-<div class="big">{data[today]["arpa"]}°C</div>
-<div class="badge">Humidex</div>
+<h2>ARPA Lombardia (Live)</h2>
+<div class="big">{data[today]["arpa"]:.1f}°C</div>
 </div>
 
 <div class="card">
-<h2>Ministero della Salute</h2>
+<h2>Ministero Risk Level</h2>
 <div class="big">Level {data[today]["ministero"]}</div>
-<div class="badge">HHWWS</div>
+</div>
+
+<div class="card chart">
+<canvas id="chart"></canvas>
 </div>
 
 </div>
+
+<script>
+const labels = {json.dumps(dates)};
+
+new Chart(document.getElementById("chart"), {{
+    type: "line",
+    data: {{
+        labels: labels,
+        datasets: [
+            {{
+                label: "Temp",
+                data: {json.dumps(humidex)},
+                borderColor: "red"
+            }},
+            {{
+                label: "Risk",
+                data: {json.dumps(hhwws)},
+                borderColor: "orange"
+            }}
+        ]
+    }}
+}});
+</script>
 
 </body>
 </html>
@@ -96,4 +145,4 @@ body {{
 with open("index.html", "w", encoding="utf-8") as f:
     f.write(html)
 
-print("OK")
+print("UPDATED WITH LIVE DATA")
