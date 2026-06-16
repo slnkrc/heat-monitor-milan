@@ -7,89 +7,74 @@
 
 <style>
 body {
-    font-family: Arial;
-    background: #0f172a;
-    color: white;
     margin: 0;
-    padding: 0;
+    font-family: Arial;
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: white;
 }
 
 .header {
-    padding: 20px;
-    background: #111827;
     text-align: center;
+    padding: 25px;
+    background: #111827;
+    font-size: 22px;
+    font-weight: bold;
 }
 
-.container {
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
     padding: 20px;
     max-width: 900px;
     margin: auto;
 }
 
 .card {
-    background: #1f2937;
+    background: rgba(255,255,255,0.05);
     padding: 20px;
-    border-radius: 12px;
-    margin-top: 15px;
+    border-radius: 16px;
 }
 
 .big {
-    font-size: 40px;
+    font-size: 48px;
     font-weight: bold;
-}
-
-.select {
-    padding: 10px;
-    font-size: 16px;
-    border-radius: 8px;
     margin-top: 10px;
 }
-</style>
 
+.badge {
+    padding: 8px 12px;
+    border-radius: 10px;
+    display: inline-block;
+    margin-top: 10px;
+    background: #f97316;
+}
+</style>
 </head>
 
 <body>
 
 <div class="header">
-    <h1>🌡 Milano Heat Dashboard</h1>
-    <p>Only Milan real-time risk overview</p>
-
-    <select id="daySelect" class="select" onchange="update()">
-        <option value="2026-06-14">2026-06-14</option>
-        <option value="2026-06-15">2026-06-15</option>
-        <option value="2026-06-16" selected>2026-06-16</option>
-    </select>
+🌡 MILANO HEAT MONITORING DASHBOARD
+<br>
+2026-06-16
 </div>
 
-<div class="container">
+<div class="grid">
 
-    <div class="card">
-        <h2>ARPA Lombardia (Humidex)</h2>
-        <div class="big" id="arpa">--</div>
-    </div>
-
-    <div class="card">
-        <h2>Ministero della Salute (HHWWS)</h2>
-        <div class="big" id="ministero">--</div>
-    </div>
-
+<div class="card">
+<h2>ARPA Lombardia</h2>
+<div class="big">37°C</div>
+<div class="badge">Humidex</div>
 </div>
 
-<script>
-const data = {"2026-06-14": {"arpa": 32, "ministero": 2}, "2026-06-15": {"arpa": 35, "ministero": 3}, "2026-06-16": {"arpa": 37, "ministero": 3}};
+<div class="card">
+<h2>Ministero della Salute</h2>
+<div class="big">Level 3</div>
+<div class="badge">HHWWS</div>
+</div>
 
-function update() {
-    const day = document.getElementById("daySelect").value;
-
-    document.getElementById("arpa").innerText =
-        data[day].arpa + "°C";
-
-    document.getElementById("ministero").innerText =
-        "Level " + data[day].ministero;
-}
-
-update();
-</script>
+</div>
 
 </body>
 </html>
