@@ -2,28 +2,105 @@ import datetime
 
 today = datetime.date.today()
 
-# SAHTE VERİ (şimdilik test)
-arpa_level = "molto forte"
-ministero_level = "3"
+# Milano için basit veri seti (şimdilik sahte ama genişletilebilir)
+data = {
+    "2026-06-14": {"arpa": 32, "ministero": 2},
+    "2026-06-15": {"arpa": 35, "ministero": 3},
+    "2026-06-16": {"arpa": 37, "ministero": 3},
+}
 
 html = f"""
+<!DOCTYPE html>
 <html>
 <head>
-<title>Heat Monitor Milano</title>
+<meta charset="utf-8">
+<title>Milano Heat Dashboard</title>
+
+<style>
+body {{
+    font-family: Arial;
+    background: #0f172a;
+    color: white;
+    margin: 0;
+    padding: 0;
+}}
+
+.header {{
+    padding: 20px;
+    background: #111827;
+    text-align: center;
+}}
+
+.container {{
+    padding: 20px;
+    max-width: 900px;
+    margin: auto;
+}}
+
+.card {{
+    background: #1f2937;
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 15px;
+}}
+
+.big {{
+    font-size: 40px;
+    font-weight: bold;
+}}
+
+.select {{
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 8px;
+    margin-top: 10px;
+}}
+</style>
+
 </head>
+
 <body>
-<h1>Milano Heat Monitoring</h1>
 
-<p><b>Date:</b> {today}</p>
+<div class="header">
+    <h1>🌡 Milano Heat Dashboard</h1>
+    <p>Only Milan real-time risk overview</p>
 
-<h2>ARPA Lombardia (Humidex)</h2>
-<p>{arpa_level}</p>
+    <select id="daySelect" class="select" onchange="update()">
+        <option value="2026-06-14">2026-06-14</option>
+        <option value="2026-06-15">2026-06-15</option>
+        <option value="2026-06-16" selected>2026-06-16</option>
+    </select>
+</div>
 
-<h2>Ministero della Salute (HHWWS)</h2>
-<p>Livello {ministero_level}</p>
+<div class="container">
 
-<h2>Comparison</h2>
-<p>System comparison placeholder</p>
+    <div class="card">
+        <h2>ARPA Lombardia (Humidex)</h2>
+        <div class="big" id="arpa">--</div>
+    </div>
+
+    <div class="card">
+        <h2>Ministero della Salute (HHWWS)</h2>
+        <div class="big" id="ministero">--</div>
+    </div>
+
+</div>
+
+<script>
+const data = {data};
+
+function update() {{
+    const day = document.getElementById("daySelect").value;
+
+    document.getElementById("arpa").innerText =
+        data[day].arpa + "°C";
+
+    document.getElementById("ministero").innerText =
+        "Level " + data[day].ministero;
+}}
+
+update();
+</script>
 
 </body>
 </html>
@@ -32,4 +109,4 @@ html = f"""
 with open("index.html", "w", encoding="utf-8") as f:
     f.write(html)
 
-print("HTML generated")
+print("Professional Milano dashboard generated")
