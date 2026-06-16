@@ -1,8 +1,8 @@
 import datetime
+import json
 
 today = datetime.date.today()
 
-# Milano için basit veri seti (şimdilik sahte ama genişletilebilir)
 data = {
     "2026-06-14": {"arpa": 32, "ministero": 2},
     "2026-06-15": {"arpa": 35, "ministero": 3},
@@ -87,7 +87,7 @@ body {{
 </div>
 
 <script>
-const data = {data};
+const data = {json.dumps(data)};
 
 function update() {{
     const day = document.getElementById("daySelect").value;
@@ -109,4 +109,4 @@ update();
 with open("index.html", "w", encoding="utf-8") as f:
     f.write(html)
 
-print("Professional Milano dashboard generated")
+print("Milano Heat Dashboard generated successfully")
