@@ -24,11 +24,11 @@ jobs:
       - name: Run script
         run: python heat_monitor.py
 
-      - name: Commit HTML
+      - name: Commit and push changes
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
           git add index.html
           git commit -m "daily update" || echo "no changes"
-          git pull --rebase origin main
+          git pull --rebase origin main || true
           git push
